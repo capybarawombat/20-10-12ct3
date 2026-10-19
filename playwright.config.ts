@@ -9,6 +9,8 @@ export default defineConfig({
     use: {
         baseURL: new URL(basePath, 'http://garden.local').href,
         headless: true,
+        trace: 'retain-on-failure',
+        screenshot: 'only-on-failure',
         launchOptions: {
             executablePath: process.env.CHROMIUM_PATH || undefined,
             args: ['--no-sandbox', '--disable-dev-shm-usage'],
