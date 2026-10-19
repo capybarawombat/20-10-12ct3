@@ -24,7 +24,7 @@ catch { /* Private browsing still works in memory. */ } return { phase: 'INTRO',
 export function reducer(s: State, a: Action): State { switch (a.type) {
     case 'OPEN_INTRO': return s.phase === 'INTRO' ? { ...s, phase: 'INTRO_LETTER_OPEN' } : s;
     case 'ENTER': return s.phase === 'INTRO_LETTER_OPEN' ? { ...s, phase: 'TREE' } : s;
-    case 'OPEN': return s.phase === 'TREE' && a.id >= 1 && a.id <= 20 && !s.collected.includes(a.id) ? { ...s, phase: 'WISH_OPEN', active: a.id } : s;
+    case 'OPEN': return s.phase === 'TREE' && Number.isInteger(a.id) && a.id >= 1 && a.id <= 20 && !s.collected.includes(a.id) ? { ...s, phase: 'WISH_OPEN', active: a.id } : s;
     case 'CLOSE': return s.phase === 'WISH_OPEN' ? { ...s, phase: 'WISH_CLOSING' } : s;
     case 'LANDED': {
         if (s.phase !== 'WISH_CLOSING' || s.active === null)

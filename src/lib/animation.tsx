@@ -3,6 +3,7 @@ import { forwardRef, useEffect, useRef, useState, type CSSProperties, type HTMLA
 
 type Pose = Record<string, number | number[] | string>;
 interface AnimatedProps extends HTMLAttributes<HTMLElement> {
+    animationKey?: string | number;
     initial?: Pose;
     animate?: Pose;
     transition?: { duration?: number; delay?: number; ease?: number[] };
@@ -23,7 +24,7 @@ function keyframe(pose: Pose, index = -1): Keyframe {
 
 function animatedElement(tag: 'div' | 'section' | 'p') {
     return forwardRef<HTMLElement, AnimatedProps>(function AnimatedElement(
-        { initial, animate, transition, onAnimationComplete, children, style, ...props }, forwarded,
+        { initial, animate, animationKey, transition, onAnimationComplete, children, style, ...props }, forwarded,
     ) {
         const node = useRef<HTMLElement | null>(null);
         const firstPose = useRef(initial);
@@ -62,7 +63,7 @@ function animatedElement(tag: 'div' | 'section' | 'p') {
             });
             animation.finished.then(finish).catch(() => { /* Cancelled animations must not collect wishes. */ });
             return () => animation.cancel();
-        }, [specification, timing]);
+        }, [specification, timing, animationKey]);
         const Tag = tag;
         return <Tag {...props} style={{ ...(initial ? keyframe(initial) : {}), ...style } as CSSProperties} ref={el => {
             node.current = el;

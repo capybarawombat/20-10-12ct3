@@ -27,13 +27,23 @@ jobs:
       - name: Generate production QR and social metadata
         env:
           SITE_URL: ${{ steps.pages.outputs.base_url }}
-        run: npm run qr -- "$SITE_URL/"
+        run: npm run qr -- "${SITE_URL%/}/"
       - name: Build for repository path
         env:
           VITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
         run: npm run build
       - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e
+      - name: Test the production repository mount point
+        env:
+          VITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+        run: npm run test:e2e
+      - name: Retain browser test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-test-results
+          path: test-results/
+          if-no-files-found: ignore
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
